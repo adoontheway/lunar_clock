@@ -69,6 +69,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_custom_calendar:
+    dependency: "direct main"
+    description:
+      path: "3rd/flutter_custom_calendar"
+      relative: true
+    source: path
+    version: "1.0.4+0.5"
   flutter_holo_date_picker:
     dependency: "direct main"
     description:
@@ -144,6 +151,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.1"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -151,6 +165,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.0"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "6.0.2"
   share:
     dependency: "direct main"
     description:

@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:get/get.dart';
+import 'package:lunar_clock/model/date_entity.dart';
+import 'package:lunar_clock/value/value.dart';
 
 class CalendarProvider extends GetConnect {
-  int day = DateTime.now().millisecond;
   @override
   void onInit() {
     super.onInit();
@@ -15,7 +14,6 @@ class CalendarProvider extends GetConnect {
     //   return request;
     // });
     httpClient.maxAuthRetries = 5;
-    getDay();
   }
 
   /**
@@ -29,7 +27,9 @@ class CalendarProvider extends GetConnect {
    * 获取当日阴历数据
    * @param day 毫秒
    */
-  Future<Response> getDay() {
-    return post('/d', {'d': day});
+  Future<DateEntity> getDay(String dayStr) async {
+    // String dayStr = date_format.format(day);
+    Response result = await post('/d', {'d': dayStr});
+    return DateEntity().fromJson(result.body);
   }
 }

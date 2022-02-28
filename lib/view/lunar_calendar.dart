@@ -1,12 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-// import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:lunar_clock/controller/calendar_controller.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
-import 'package:lunar_clock/view/widgets/red_container.dart';
+import 'package:lunar_clock/view/calendar_chose.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
 
 class LunarCalendar extends StatefulWidget {
@@ -17,9 +19,32 @@ class LunarCalendar extends StatefulWidget {
 }
 
 class _LunarCalendarState extends State<LunarCalendar> {
-  CalendarController controller = CalendarController();
-
+  // CalendarController controller = CalendarController();
+  HttpClient _httpClient = HttpClient();
+  String host = "http://localhost";
+  int port = 8080;
   DateTime? now;
+  getDate(DateTime dateTime) async {
+    String dateStr = date_format.format(dateTime);
+    try {
+      var request = await _httpClient.get(host, port, "/d/$dateStr");
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.ok) {
+        var json = await response.transform(utf8.decoder).join();
+        var data = jsonDecode(json);
+        if (!mounted) {
+          return;
+        }
+        setState(() {});
+        print("$data");
+      } else {
+        print("Error on http request:${response.statusCode}");
+      }
+    } catch (exception) {
+      print("Error on connect to $host");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,15 +82,6 @@ class _LunarCalendarState extends State<LunarCalendar> {
                   now = newDate;
                 });
               }
-              // DatePicker.showDatePicker(
-              //   context,
-              //   minDateTime: DateTime.parse('1984-01-01'),
-              //   maxDateTime: DateTime.parse('2024-12-31'),
-              //   initialDateTime: DateTime.now(),
-              //   dateFormat: 'yyyy-M-d',
-              //   onChange: onDateChanged,
-              //   onConfirm: onConfirmed,
-              // );
             },
             icon: Icon(
               Ionicons.calendar_outline,
@@ -73,7 +89,10 @@ class _LunarCalendarState extends State<LunarCalendar> {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // Navigator.of(context).push(CalendarChoseView());
+              // Get.to(CalendarChoseView());
+            },
             icon: Icon(
               Ionicons.share_social,
               color: white_primary,

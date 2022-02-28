@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lunar_clock/controller/calendar_controller.dart';
 import 'package:lunar_clock/value/value.dart';
-import 'package:lunar_clock/view/alarm_view.dart';
-import 'package:lunar_clock/view/clock_view.dart';
 import 'package:lunar_clock/view/lunar_calendar.dart';
 
 void main() {
   runApp(const MyApp());
+  // Get.put(MyController());
 }
 
 class MyApp extends StatelessWidget {

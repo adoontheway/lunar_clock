@@ -41,6 +41,8 @@ dependencies:
   # Flutter 版微信登录/分享/支付 SDK
   # wechat_kit: ^3.0.1
   get: ^4.6.1
+  flutter_custom_calendar:
+    path: ./3rd/flutter_custom_calendar
 
 dev_dependencies:
   flutter_test:
