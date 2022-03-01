@@ -8,13 +8,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.8.2"
-  auto_size_text:
-    dependency: transitive
-    description:
-      name: auto_size_text
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -76,13 +69,6 @@ packages:
       relative: true
     source: path
     version: "1.0.4+0.5"
-  flutter_holo_date_picker:
-    dependency: "direct main"
-    description:
-      name: flutter_holo_date_picker
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.1+2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -90,6 +76,11 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_screenutil:
     dependency: "direct main"
     description:
@@ -102,13 +93,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.6.1"
   intl:
     dependency: "direct main"
     description:

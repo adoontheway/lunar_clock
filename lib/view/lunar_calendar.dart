@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
-import 'package:lunar_clock/view/calendar_chose.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
 
 class LunarCalendar extends StatefulWidget {
@@ -63,25 +62,67 @@ class _LunarCalendarState extends State<LunarCalendar> {
         // leading: _buildTotayButton(),
         actions: [
           IconButton(
-            onPressed: () async {
-              DateTime? newDate = await DatePicker.showSimpleDatePicker(
-                context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime.parse('1984-01-01'),
-                lastDate: DateTime.parse('2024-12-31'),
-                dateFormat: 'yyyy-M-d',
-                locale: DateTimePickerLocale.zh_cn,
-                looping: true,
-                titleText: "请选择日期",
-                confirmText: "确定",
-                cancelText: "取消",
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Scaffold(
+                    body: SafeArea(
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            height: 55.0,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 25, right: 25),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Color(0xffcccccc),
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: _buildPickerHeader(),
+                            ),
+                          ),
+                          CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            minimumDate: DateTime(1990, 1, 1),
+                            maximumDate: DateTime(2022, 12, 31),
+                            initialDateTime: DateTime.now(),
+                            dateOrder: DatePickerDateOrder.ymd,
+                            onDateTimeChanged: (DateTime newDate) {
+                              // print("selected $datetiem");
+                              setState(() {
+                                print('selected: $newDate');
+                                now = newDate;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                  return Container(
+                    height: 400.0,
+                    child: SafeArea(
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        minimumDate: DateTime(1990, 1, 1),
+                        maximumDate: DateTime(2022, 12, 31),
+                        initialDateTime: DateTime.now(),
+                        dateOrder: DatePickerDateOrder.ymd,
+                        onDateTimeChanged: (DateTime newDate) {
+                          // print("selected $datetiem");
+                          setState(() {
+                            print('selected: $newDate');
+                            now = newDate;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
               );
-              if (newDate != null) {
-                setState(() {
-                  print('selected: $newDate');
-                  now = newDate;
-                });
-              }
             },
             icon: Icon(
               Ionicons.calendar_outline,
@@ -123,6 +164,50 @@ class _LunarCalendarState extends State<LunarCalendar> {
             // _buildRow5(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPickerHeader() {
+    return Container(
+      width: ScreenUtil().uiSize.width, //MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              print("点击了阳历按钮");
+            },
+            child: Text("阳历"),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                return Colors.orange;
+              }),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              print("点击了阴历按钮");
+            },
+            child: const Text("阴历"),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                return Colors.blue;
+              }),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              print("点击了今日按钮");
+            },
+            child: Text("今日"),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                return Colors.green;
+              }),
+            ),
+          ),
+        ],
       ),
     );
   }

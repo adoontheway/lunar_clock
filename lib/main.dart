@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:lunar_clock/controller/calendar_controller.dart';
 import 'package:lunar_clock/value/value.dart';
 import 'package:lunar_clock/view/lunar_calendar.dart';
 
@@ -21,6 +20,16 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: () => MaterialApp(
+        locale: const Locale("zh", "CN"),
+        supportedLocales: const [
+          Locale("zh", "CN"),
+          Locale("en", "US"),
+        ],
+        localizationsDelegates: const [
+          GlobalCupertinoLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
         title: '老黄历',
         debugShowCheckedModeBanner: false,
         theme: light_theme,

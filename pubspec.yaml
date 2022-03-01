@@ -30,17 +30,20 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_localizations:
+    sdk: flutter
+
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
   ionicons: ^0.1.2
-  flutter_holo_date_picker: ^1.0.1+2
+  # flutter_holo_date_picker: ^1.0.1+2
   # 不支持null safety
   # flutter_cupertino_date_picker: ^1.0.26+2
   flutter_screenutil: ^5.1.0
   share: ^2.0.4
   # Flutter 版微信登录/分享/支付 SDK
   # wechat_kit: ^3.0.1
-  get: ^4.6.1
+  # get: ^4.6.1
   flutter_custom_calendar:
     path: ./3rd/flutter_custom_calendar
 
