@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:lunar_clock/model/date_entity.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
@@ -18,40 +17,47 @@ class LunarCalendar extends StatefulWidget {
 }
 
 class _LunarCalendarState extends State<LunarCalendar> {
-  // CalendarController controller = CalendarController();
-  HttpClient _httpClient = HttpClient();
-  String host = "http://localhost";
-  int port = 8080;
-  DateTime? now;
-  getDate(DateTime dateTime) async {
-    String dateStr = date_format.format(dateTime);
+  late DateEntity _dateEntity;
+
+  late DateTime _now;
+  getDate() async {
+    String dateStr = date_format.format(_now);
     try {
-      var request = await _httpClient.get(host, port, "/d/$dateStr");
-      var response = await request.close();
+      var response = await dio.get("/d/$dateStr");
       if (response.statusCode == HttpStatus.ok) {
-        var json = await response.transform(utf8.decoder).join();
-        var data = jsonDecode(json);
-        if (!mounted) {
-          return;
+        if (kDebugMode) {
+          print("${response.data}");
         }
+        _dateEntity = DateEntity().fromJson(response.data);
+
         setState(() {});
-        print("$data");
       } else {
         print("Error on http request:${response.statusCode}");
       }
     } catch (exception) {
-      print("Error on connect to $host");
+      print("Error on connect");
     }
   }
 
   @override
   void initState() {
     super.initState();
+    now = DateTime.now();
+  }
+
+  set now(DateTime value) {
+    if (_now == value) return;
+    _now = value;
+    getDate();
+  }
+
+  void onDateSelected(DateTime newDate) {
+    print('selected: $newDate');
+    now = newDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    now ??= DateTime.now();
     return Scaffold(
       drawer: Drawer(
         child: my_drawer(),
@@ -61,161 +67,43 @@ class _LunarCalendarState extends State<LunarCalendar> {
 
         // leading: _buildTotayButton(),
         actions: [
-          IconButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return Scaffold(
-                    body: SafeArea(
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            height: 55.0,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 25, right: 25),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 2,
-                                  color: Color(0xffcccccc),
-                                ),
-                                color: Colors.white,
-                              ),
-                              child: _buildPickerHeader(),
-                            ),
-                          ),
-                          CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.date,
-                            minimumDate: DateTime(1990, 1, 1),
-                            maximumDate: DateTime(2022, 12, 31),
-                            initialDateTime: DateTime.now(),
-                            dateOrder: DatePickerDateOrder.ymd,
-                            onDateTimeChanged: (DateTime newDate) {
-                              // print("selected $datetiem");
-                              setState(() {
-                                print('selected: $newDate');
-                                now = newDate;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                  return Container(
-                    height: 400.0,
-                    child: SafeArea(
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.date,
-                        minimumDate: DateTime(1990, 1, 1),
-                        maximumDate: DateTime(2022, 12, 31),
-                        initialDateTime: DateTime.now(),
-                        dateOrder: DatePickerDateOrder.ymd,
-                        onDateTimeChanged: (DateTime newDate) {
-                          // print("selected $datetiem");
-                          setState(() {
-                            print('selected: $newDate');
-                            now = newDate;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-            icon: Icon(
-              Ionicons.calendar_outline,
-              color: white_primary,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              // Navigator.of(context).push(CalendarChoseView());
-              // Get.to(CalendarChoseView());
-            },
-            icon: Icon(
-              Ionicons.share_social,
-              color: white_primary,
-            ),
-          ),
+          buildCalendatChoseButton(context, onDateSelected),
+          buildShareButton(context),
         ],
         // elevation: 0.5,
         backgroundColor: red_primary,
       ),
-      body: Container(
-        width: Screen.width - 20,
-        margin: const EdgeInsets.all(5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildBigLunarDate(),
-            _buildWeek(),
-            // _buildFestival(),
+      body: _dateEntity == null
+          ? CircularProgressIndicator()
+          : Container(
+              width: Screen.width - 20,
+              margin: const EdgeInsets.all(5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildBigLunarDate(),
+                  _buildWeek(),
+                  // _buildFestival(),
 
-            _buildRow1(),
-            _getYi(),
-            _getJi(),
-            _buildTaiShen(),
-            _buildJiShen(),
-            _buildShiChen(),
-            _buildPengzu(),
-            // _buildRow5(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPickerHeader() {
-    return Container(
-      width: ScreenUtil().uiSize.width, //MediaQuery.of(context).size.width,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              print("点击了阳历按钮");
-            },
-            child: Text("阳历"),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith((states) {
-                return Colors.orange;
-              }),
+                  _buildRow1(),
+                  _getYi(),
+                  _getJi(),
+                  _buildTaiShen(),
+                  _buildJiShen(),
+                  _buildShiChen(),
+                  _buildPengzu(),
+                  // _buildRow5(),
+                ],
+              ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              print("点击了阴历按钮");
-            },
-            child: const Text("阴历"),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith((states) {
-                return Colors.blue;
-              }),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              print("点击了今日按钮");
-            },
-            child: Text("今日"),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith((states) {
-                return Colors.green;
-              }),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _buildTitle() {
     return Container(
       child: Text(
-        DateFormat('yyyy年MM月dd').format(now!),
+        DateFormat('yyyy年MM月dd').format(_now!),
         style: TextStyle(
           color: red_secondary,
         ),
@@ -260,14 +148,6 @@ class _LunarCalendarState extends State<LunarCalendar> {
       ),
     );
   }
-
-  // void onConfirmed(DateTime dateTime, List<int> selectedIndex) {
-  //   setState(() {
-  //     now = dateTime;
-  //   });
-  // }
-
-  // void onDateChanged(DateTime dateTime, List<int> selectedIndex) {}
 
   Widget _buildBigLunarDate() {
     return Container(

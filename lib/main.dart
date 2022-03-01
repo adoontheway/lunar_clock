@@ -1,11 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
 import 'package:lunar_clock/view/lunar_calendar.dart';
 
 void main() {
-  runApp(const MyApp());
+  initDio().then((value) {
+    if (value) {
+      runApp(const MyApp());
+    } else {
+      print("网络连接出现异常，请检查网络设置");
+      exit(111);
+    }
+  });
+
   // Get.put(MyController());
 }
 
