@@ -12,8 +12,8 @@ Future<bool> initDio() async {
   dio = Dio(
     BaseOptions(
       baseUrl: host,
-      connectTimeout: 5000,
-      receiveTimeout: 5000,
+      // connectTimeout: 5000,
+      // receiveTimeout: 5000,
       headers: {HttpHeaders.userAgentHeader: 'dio', 'common-header': 'xx'},
     ),
   );
@@ -35,7 +35,7 @@ Future<bool> _reportDeviceInfo() async {
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final deviceInfo = await deviceInfoPlugin.deviceInfo;
   final map = deviceInfo.toMap();
-  Response response = await dio.get(api_device_info, queryParameters: map);
+  Response response = await dio.post(api_device_info, data: map);
   if (response.statusCode == HttpStatus.ok) {
     dio.options.headers["token"] = response.data["token"];
     return true;

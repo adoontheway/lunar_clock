@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,9 +17,9 @@ class LunarCalendar extends StatefulWidget {
 }
 
 class _LunarCalendarState extends State<LunarCalendar> {
-  late DateEntity _dateEntity;
+  DateEntity? _dateEntity;
 
-  late DateTime _now;
+  DateTime _now = DateTime.now();
   getDate() async {
     String dateStr = date_format.format(_now);
     try {
@@ -43,7 +42,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
   @override
   void initState() {
     super.initState();
-    now = DateTime.now();
+    // now = DateTime.now();
+    getDate();
   }
 
   set now(DateTime value) {
@@ -104,7 +104,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
   Widget _buildTitle() {
     return Container(
       child: Text(
-        DateFormat('yyyy年MM月dd').format(_now!),
+        DateFormat('yyyy年MM月dd').format(_now),
         style: TextStyle(
           color: red_secondary,
         ),
