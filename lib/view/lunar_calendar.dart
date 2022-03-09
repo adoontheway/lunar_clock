@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lunar_clock/const/const.dart';
 import 'package:lunar_clock/model/date_entity.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
@@ -23,7 +24,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
   getDate() async {
     String dateStr = date_format.format(_now);
     try {
-      var response = await dio.get("/d/$dateStr");
+      var response = await dio.get("$api_date/$dateStr");
       if (response.statusCode == HttpStatus.ok) {
         if (kDebugMode) {
           print("${response.data}");
