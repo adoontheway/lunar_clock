@@ -14,7 +14,7 @@ Future<bool> initDio() async {
       baseUrl: host,
       // connectTimeout: 5000,
       // receiveTimeout: 5000,
-      headers: {HttpHeaders.userAgentHeader: 'dio', 'common-header': 'xx'},
+      // headers: {HttpHeaders.userAgentHeader: 'dio', 'common-header': 'xx'},
     ),
   );
   // 上报设备信息成功会返回token
@@ -35,7 +35,8 @@ Future<bool> _reportDeviceInfo() async {
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final deviceInfo = await deviceInfoPlugin.deviceInfo;
   final map = deviceInfo.toMap();
-  Response response = await dio.post(api_device_info, data: map);
+  FormData formData = FormData.fromMap(map);
+  Response response = await dio.post(api_device_info, data: formData);
   if (response.statusCode == HttpStatus.ok) {
     dio.options.headers["token"] = response.data["token"];
     return true;
