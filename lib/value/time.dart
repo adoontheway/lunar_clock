@@ -12,6 +12,20 @@ const List<String> lunar_dizhi = [
   "戌",
   "亥"
 ];
+const List<String> lunar_dizhi_char = [
+  "zi",
+  "chou",
+  "yin",
+  "mao",
+  "chen",
+  "si",
+  "wu",
+  "wei",
+  "shen",
+  "you",
+  "xu",
+  "hai"
+];
 const List<String> lunar_tiangan = [
   "甲",
   "乙",

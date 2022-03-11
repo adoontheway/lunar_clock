@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:lunar_clock/const/const.dart';
 
-String host = "http://localhost:8080";
+String host = "http://192.168.3.5:8000";
 late Dio dio;
 Future<bool> initDio() async {
   dio = Dio(

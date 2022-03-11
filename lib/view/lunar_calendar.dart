@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:lunar_clock/const/const.dart';
 import 'package:lunar_clock/model/date_entity.dart';
+import 'package:lunar_clock/model/time_entity.dart';
+import 'package:lunar_clock/model/time_sub_entity.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
@@ -18,6 +21,7 @@ class LunarCalendar extends StatefulWidget {
 
 class _LunarCalendarState extends State<LunarCalendar> {
   DateEntity? _dateEntity;
+  TimeEntity? _timeEntity;
 
   DateTime _now = DateTime.now();
   getDate() async {
@@ -28,7 +32,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
         if (kDebugMode) {
           print("${response.data}");
         }
-        _dateEntity = DateEntity().fromJson(response.data);
+        _dateEntity = DateEntity().fromJson(response.data["day"]);
+        _timeEntity = TimeEntity().fromJson(response.data["time"]);
 
         setState(() {});
       } else {
@@ -42,8 +47,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
   @override
   void initState() {
     super.initState();
-    // now = DateTime.now();
-    getDate();
+    now = DateTime.now();
+    // getDate();
   }
 
   set now(DateTime value) {
@@ -60,9 +65,9 @@ class _LunarCalendarState extends State<LunarCalendar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: my_drawer(),
-      ),
+      // drawer: Drawer(
+      //   child: my_drawer(),
+      // ),
       appBar: AppBar(
         title: _buildTitle(),
 
@@ -75,9 +80,13 @@ class _LunarCalendarState extends State<LunarCalendar> {
         backgroundColor: red_primary,
       ),
       body: _dateEntity == null
-          ? CircularProgressIndicator()
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
+              ),
+            )
           : Container(
-              width: Screen.width - 20,
+              width: ScreenUtil().setWidth(Screen.width - 20),
               margin: const EdgeInsets.all(5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -102,11 +111,13 @@ class _LunarCalendarState extends State<LunarCalendar> {
   }
 
   Widget _buildTitle() {
-    return Container(
+    return Center(
       child: Text(
-        DateFormat('yyyy年MM月dd').format(_now),
+        DateFormat('yyyy年MM月').format(_now),
         style: TextStyle(
-          color: red_secondary,
+          color: white_primary,
+          fontWeight: FontWeight.bold,
+          fontStyle: FontStyle.normal,
         ),
       ),
     );
@@ -122,7 +133,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            '辛丑年',
+            // '辛丑年',
+            _dateEntity!.ganZhi.split(" ")[0],
             style: TextStyle(
               fontSize: 20,
               color: white_primary,
@@ -130,21 +142,22 @@ class _LunarCalendarState extends State<LunarCalendar> {
             ),
           ),
           Text(
-            '十二月小',
+            // '十二月小',
+            _dateEntity!.nongLi.split(" ")[1],
             style: TextStyle(
               fontSize: 20,
               color: white_primary,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            '二十一日',
-            style: TextStyle(
-              fontSize: 20,
-              color: white_primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          // Text(
+          //   '二十一日',
+          //   style: TextStyle(
+          //     fontSize: 20,
+          //     color: white_primary,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
     );
@@ -155,7 +168,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
       width: 410,
       alignment: Alignment.center,
       child: Text(
-        '15',
+        // '15',
+        _now.day.toString(),
         style: TextStyle(
           fontSize: 120,
           fontWeight: FontWeight.bold,
@@ -167,7 +181,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
 
   Widget _buildWeek() {
     return Container(
-      width: 410,
+      width: ScreenUtil().setWidth(Screen.height - 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -192,39 +206,6 @@ class _LunarCalendarState extends State<LunarCalendar> {
     );
   }
 
-  Widget _buildTotayButton() {
-    return Container(
-      // color: Color.fromARGB(0xcc, 0xcc, 0xcc, 0xcc),
-      child: TextButton(
-        child: Text('今'),
-        onPressed: () => print('back today...'),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.greenAccent),
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFestival() {
-    return Container(
-      child: Text(
-        '腊八节',
-        style: TextStyle(
-          fontSize: 20,
-          color: red_primary,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      width: Screen.width - 10,
-    );
-  }
-
   Widget _buildJeiqi() {
     return Container(
       width: 142,
@@ -234,7 +215,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            '小寒 1月5日',
+            // '小寒 1月5日',
+            _dateEntity!.jieQi.split(" ")[0],
             style: TextStyle(
               fontSize: 20,
               color: white_primary,
@@ -243,7 +225,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
             textAlign: TextAlign.left,
           ),
           Text(
-            '大寒 1月20日',
+            // '大寒 1月20日',
+            _dateEntity!.jieQi.split(" ")[1],
             style: TextStyle(
               fontSize: 20,
               color: white_primary,
@@ -274,7 +257,9 @@ class _LunarCalendarState extends State<LunarCalendar> {
               Container(
                 margin: const EdgeInsets.only(top: 15),
                 child: Image.asset(
-                  "assets/imgs/xingzuo/baiyang.png",
+                  // todo
+                  // "assets/imgs/xingzuo/baiyang.png",
+                  "assets/imgs/xingzuo/${xingzuo_to_res[_dateEntity!.xingZuo]}.png",
                   width: 60,
                   height: 60,
                 ),
@@ -303,7 +288,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
               Container(
                 margin: const EdgeInsets.only(top: 5),
                 child: Text(
-                  '巳命互禄',
+                  // '巳命互禄',
+                  _dateEntity!.riLu,
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -451,7 +437,9 @@ class _LunarCalendarState extends State<LunarCalendar> {
           margin: const EdgeInsets.all(5),
           child: Padding(
             padding: EdgeInsets.all(5),
-            child: Text('装修 动土 订婚 安葬 上梁 修造 祈福 祭祀 拆卸 订盟',
+            child: Text(
+                // '装修 动土 订婚 安葬 上梁 修造 祈福 祭祀 拆卸 订盟',
+                _dateEntity!.yi,
                 softWrap: true,
                 style: TextStyle(
                   color: green_primary,
@@ -487,7 +475,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
           margin: const EdgeInsets.all(5),
           child: Padding(
             padding: EdgeInsets.all(5),
-            child: Text('开业 开工 安床 开张 作灶 开市 立卷',
+            child: Text(_dateEntity!.ji,
+                // '开业 开工 安床 开张 作灶 开市 立卷',
                 softWrap: true,
                 style: TextStyle(
                   color: red_primary,
@@ -619,6 +608,38 @@ class _LunarCalendarState extends State<LunarCalendar> {
     );
   }
 
+  Widget _buildShiChenItem(TimeSubEntity item) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          // "甲",
+          item.shiGanZhi.split("")[0],
+          style: TextStyle(
+            color: red_primary,
+            fontSize: 18,
+          ),
+        ),
+        Text(
+          // e,
+          item.shiGanZhi.split("")[1],
+          style: TextStyle(
+            color: red_primary,
+            fontSize: 18,
+          ),
+        ),
+        Text(
+          // "吉",
+          item.jiXiong.split(" ")[0],
+          style: TextStyle(
+            color: green_primary,
+            fontSize: 18,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildShiChen() {
     return get_red_container(
         Container(
@@ -637,36 +658,53 @@ class _LunarCalendarState extends State<LunarCalendar> {
               Container(
                 width: 280,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: lunar_dizhi.map((e) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "甲",
-                          style: TextStyle(
-                            color: red_primary,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          e,
-                          style: TextStyle(
-                            color: red_primary,
-                            fontSize: 18,
-                          ),
-                        ),
-                        Text(
-                          "吉",
-                          style: TextStyle(
-                            color: green_primary,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildShiChenItem(_timeEntity!.zi),
+                      _buildShiChenItem(_timeEntity!.chou),
+                      _buildShiChenItem(_timeEntity!.yin),
+                      _buildShiChenItem(_timeEntity!.mao),
+                      _buildShiChenItem(_timeEntity!.chen),
+                      _buildShiChenItem(_timeEntity!.si),
+                      _buildShiChenItem(_timeEntity!.wu),
+                      _buildShiChenItem(_timeEntity!.wei),
+                      _buildShiChenItem(_timeEntity!.shen),
+                      _buildShiChenItem(_timeEntity!.you),
+                      _buildShiChenItem(_timeEntity!.xu),
+                      _buildShiChenItem(_timeEntity!.hai),
+                    ]
+                    // lunar_dizhi_char.map((e) {
+                    //   return Column(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       Text(
+                    //         // "甲",
+                    //         _timeEntity!.zi.shiGanZhi.split("")[0],
+                    //         style: TextStyle(
+                    //           color: red_primary,
+                    //           fontSize: 18,
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         // e,
+                    //         _timeEntity!.zi.shiGanZhi.split("")[1],
+                    //         style: TextStyle(
+                    //           color: red_primary,
+                    //           fontSize: 18,
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         // "吉",
+                    //         _timeEntity!.zi.jiXiong.split(" ")[0],
+                    //         style: TextStyle(
+                    //           color: green_primary,
+                    //           fontSize: 18,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   );
+                    // }).toList(),
+                    ),
               ),
             ],
           ),
@@ -684,7 +722,9 @@ class _LunarCalendarState extends State<LunarCalendar> {
         color: red_primary,
       ),
       child: Text(
-        '彭祖百忌：辛不合酱主人不尝 酉不宴客醉坐颠狂',
+        // '彭祖百忌：辛不合酱主人不尝 酉不宴客醉坐颠狂',
+        '彭祖百忌：${_dateEntity!.pengZuBaiJi}',
+
         style: TextStyle(
           color: white_primary,
           fontSize: 18,
@@ -751,7 +791,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
               textColor: white_primary,
               backgroundColor: red_primary),
           Text(
-            "厨灶门外东南",
+            // "厨灶门外东南",
+            _dateEntity!.tanShenZhanFang,
             style: TextStyle(
               fontSize: 16,
               color: red_primary,
@@ -774,7 +815,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
                 textColor: white_primary,
                 backgroundColor: red_primary),
             Text(
-              "冲兔(乙卯)煞东",
+              // "冲兔(乙卯)煞东",
+              _dateEntity!.chongSha,
               style: TextStyle(
                 fontSize: 16,
                 color: red_primary,
@@ -796,7 +838,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
               textColor: white_primary,
               backgroundColor: red_primary),
           Text(
-            "天上火",
+            // "天上火",
+            _dateEntity!.riWuXing,
             style: TextStyle(
               fontSize: 16,
               color: red_primary,
@@ -824,10 +867,10 @@ class _LunarCalendarState extends State<LunarCalendar> {
               width: 90,
               alignment: Alignment.center,
             ),
-            _buildSubJiShen("喜神", "西南"),
-            _buildSubJiShen("福神", "西南"),
-            _buildSubJiShen("财神", "西南"),
-            _buildSubJiShen("阳贵神", "西南"),
+            _buildSubJiShen("喜神", _dateEntity!.xiShen),
+            _buildSubJiShen("福神", _dateEntity!.fuShen),
+            _buildSubJiShen("财神", _dateEntity!.caiShen),
+            _buildSubJiShen("阳贵神", _dateEntity!.yangGuiShen),
             _buildSubJiShen("阴贵神", "西南", width: 64),
           ],
         ),

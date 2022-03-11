@@ -45,7 +45,7 @@ Widget buildCalendatChoseButton(
                   CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.date,
                     minimumDate: DateTime(1990, 1, 1),
-                    maximumDate: DateTime(2022, 12, 31),
+                    maximumDate: DateTime(2022, 12, 30),
                     initialDateTime: DateTime.now(),
                     dateOrder: DatePickerDateOrder.ymd,
                     onDateTimeChanged: onDateSelected,
