@@ -17,11 +17,12 @@ Future<bool> initDio() async {
       // headers: {HttpHeaders.userAgentHeader: 'dio', 'common-header': 'xx'},
     ),
   );
+  dio.interceptors.add(LogInterceptor(requestBody: true));
   // 上报设备信息成功会返回token
   var result = await _reportDeviceInfo();
   if (result) {
     dio.interceptors.add(AuthInterceptor());
-    dio.interceptors.add(LogInterceptor(requestBody: false));
+
     var cookieJar = CookieJar();
     // 也可以将请求缓存到本地
     // PersistCookieJar pCookieJar = PersistCookieJar()
@@ -35,8 +36,8 @@ Future<bool> _reportDeviceInfo() async {
   DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final deviceInfo = await deviceInfoPlugin.deviceInfo;
   final map = deviceInfo.toMap();
-  FormData formData = FormData.fromMap(map);
-  Response response = await dio.post(api_device_info, data: formData);
+  // FormData formData = FormData.fromMap(map);
+  Response response = await dio.post(api_device_info, data: map);
   if (response.statusCode == HttpStatus.ok) {
     dio.options.headers["token"] = response.data["token"];
     return true;
