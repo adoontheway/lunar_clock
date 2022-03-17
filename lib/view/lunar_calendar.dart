@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:lunar_clock/model/time_entity.dart';
 import 'package:lunar_clock/model/time_sub_entity.dart';
 import 'package:lunar_clock/utils/util.dart';
 import 'package:lunar_clock/value/value.dart';
+import 'package:lunar_clock/view/calendar_painter.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
 
 class LunarCalendar extends StatefulWidget {
@@ -19,7 +21,8 @@ class LunarCalendar extends StatefulWidget {
   _LunarCalendarState createState() => _LunarCalendarState();
 }
 
-class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProviderStateMixin{
+class _LunarCalendarState extends State<LunarCalendar>
+    with SingleTickerProviderStateMixin {
   DateEntity? _dateEntity;
   TimeEntity? _timeEntity;
   CalPoint curPoint = CalPoint.data(-1, -1);
@@ -34,6 +37,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
   bool needCancelAnim = true;
 
   DateTime _now = DateTime.now();
+  late ui.Image xingZuoImage;
   getDate() async {
     String dateStr = date_format.format(_now);
     try {
@@ -44,7 +48,11 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
         }
         _dateEntity = DateEntity().fromJson(response.data["day"]);
         _timeEntity = TimeEntity().fromJson(response.data["time"]);
-
+        xingZuoImage = await getAssetImage(
+          "assets/imgs/xingzuo/${xingzuo_to_res[_dateEntity!.xingZuo]}.png",
+          width: 60,
+          height: 60,
+        );
         setState(() {});
       } else {
         print("Error on http request:${response.statusCode}");
@@ -65,6 +73,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
   set now(DateTime value) {
     if (_now == value) return;
     _now = value;
+
     getDate();
   }
 
@@ -162,7 +171,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
               ),
             )
           : Container(
-              width: 410.w,//ScreenUtil().setWidth(Screen.width - 20),
+              width: 410.w, //ScreenUtil().setWidth(Screen.width - 20),
               margin: const EdgeInsets.all(5),
               // padding: const EdgeInsets.only(top: 5),
               child: GestureDetector(
@@ -171,31 +180,37 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
                 // onPanEnd: toNormal,
                 // onPanCancel: toNormal,
                 // onPanUpdate: toDragUpdate,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: CustomPaint(
+                    painter: CalendarPainter(
+                  dateEntity: this._dateEntity!,
+                  now: this._now,
+                  xingzuoPic: this.xingZuoImage,
+                )),
+                // child: Column(
+                //   mainAxisAlignment: MainAxisAlignment.start,
+                //   crossAxisAlignment: CrossAxisAlignment.start,
 
-                  children: [
-                    _buildBigLunarDate(),
-                    _buildWeek(),
-                    // _buildFestival(),
+                //   children: [
+                //     _buildBigLunarDate(),
+                //     _buildWeek(),
+                //     // _buildFestival(),
 
-                    _buildRow1(),
-                    Divider(height: 5.h,),
-                    _getYi(),
-                    Divider(height: 5.h,),
-                    _getJi(),
-                    Divider(height: 5.h,),
-                    _buildTaiShen(),
-                     Divider(height: 5.h,),
-                    _buildJiShen(),
-                     Divider(height: 5.h,),
-                    _buildShiChen(),
-                     Divider(height: 5.h,),
-                    _buildPengzu(),
-                    // _buildRow5(),
-                  ],
-                ),
+                //     _buildRow1(),
+                //     Divider(height: 5.h,),
+                //     _getYi(),
+                //     Divider(height: 5.h,),
+                //     _getJi(),
+                //     Divider(height: 5.h,),
+                //     _buildTaiShen(),
+                //      Divider(height: 5.h,),
+                //     _buildJiShen(),
+                //      Divider(height: 5.h,),
+                //     _buildShiChen(),
+                //      Divider(height: 5.h,),
+                //     _buildPengzu(),
+                //     // _buildRow5(),
+                //   ],
+                // ),
               ),
             ),
     );
@@ -256,8 +271,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
 
   Widget _buildBigLunarDate() {
     return Container(
-
-      width: 410.w,//ScreenUtil().setWidth(Screen.width - 20),
+      width: 410.w, //ScreenUtil().setWidth(Screen.width - 20),
       alignment: Alignment.center,
       child: Text(
         // '15',
@@ -273,7 +287,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
 
   Widget _buildWeek() {
     return Container(
-      width: 410.w,//ScreenUtil().setWidth(Screen.width - 20),
+      width: 410.w, //ScreenUtil().setWidth(Screen.width - 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -286,7 +300,8 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
             textAlign: TextAlign.center,
           ),
           Text(
-            '星期六 第二周',
+            // '星期六 第二周',
+            _dateEntity!.gongLi.split(" ")[1],
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.w500,
@@ -326,15 +341,15 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
             ),
             textAlign: TextAlign.left,
           ),
-          Text(
-            '三九第二天',
-            style: TextStyle(
-              fontSize: 20.sp,
-              color: white_primary,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.right,
-          )
+          // Text(
+          //   '三九第二天',
+          //   style: TextStyle(
+          //     fontSize: 20.sp,
+          //     color: white_primary,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          //   textAlign: TextAlign.right,
+          // )
         ],
       ),
     );
@@ -412,7 +427,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
           height: 70.h,
           margin: const EdgeInsets.all(5),
           child: Padding(
-            padding: EdgeInsets.only(top:5),
+            padding: EdgeInsets.only(top: 5),
             child: Text(
               // '装修 动土 订婚 安葬 上梁 修造 祈福 祭祀 拆卸 订盟',
               _dateEntity!.yi,
@@ -423,7 +438,6 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
               ),
               maxLines: 2,
               textAlign: TextAlign.left,
-
             ),
           ),
         ),
@@ -438,7 +452,6 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
       Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Container(
           margin: EdgeInsets.all(8),
-
           child: Image.asset(
             "assets/imgs/ji.png",
           ),
@@ -544,7 +557,6 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
     );
   }
 
-
   Widget _buildShiChenItem(TimeSubEntity item) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -609,9 +621,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
                     _buildShiChenItem(_timeEntity!.you),
                     _buildShiChenItem(_timeEntity!.xu),
                     _buildShiChenItem(_timeEntity!.hai),
-                  ]
-
-                  ),
+                  ]),
             ),
           ],
         ),
@@ -659,7 +669,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
 
   Widget _taishen() {
     return Container(
-      child:Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           get_title(
@@ -683,7 +693,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
 
   Widget _chongsa() {
     return Container(
-      child:Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           get_title(
@@ -707,7 +717,7 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
 
   Widget _riwuxing() {
     return Container(
-      child:Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           get_title(
@@ -742,13 +752,13 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
                 backgroundColor: red_primary,
                 width: 85.w,
               ),
-              width: 90.w,
+              width: 95.w,
               alignment: Alignment.center,
             ),
-            _buildSubJiShen("喜神", _dateEntity!.xiShen, width: 60.w),
+            _buildSubJiShen("喜神", _dateEntity!.xiShen),
             _buildSubJiShen("福神", _dateEntity!.fuShen),
             _buildSubJiShen("财神", _dateEntity!.caiShen),
-            _buildSubJiShen("阳贵神", _dateEntity!.yangGuiShen),
+            _buildSubJiShen("阳贵神", _dateEntity!.yangGuiShen, width: 65.w),
             _buildSubJiShen("阴贵神", "西南", width: 64.w),
           ],
         ),
@@ -763,36 +773,36 @@ class _LunarCalendarState extends State<LunarCalendar> with SingleTickerProvider
     width ??= 61.w;
     height ??= 81.h;
     return //get_red_container(
-      Container(
-        width: width,
-        height: height,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 5),
-              height: height / 2,
-              width: width,
-              decoration: BoxDecoration(color: red_primary),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  color: white_primary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Text(
-              content,
+        Container(
+      width: width,
+      height: height,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 5),
+            height: height / 2,
+            width: width,
+            decoration: BoxDecoration(color: red_primary),
+            child: Text(
+              title,
               style: TextStyle(
-                fontSize: 16.sp,
-                color: red_primary,
+                fontSize: 18.sp,
+                color: white_primary,
               ),
               textAlign: TextAlign.center,
             ),
-          ],
-        ),
-      );
+          ),
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: red_primary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
     // );
   }
 }

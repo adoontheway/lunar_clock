@@ -1,4 +1,6 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 Widget btnCircle(String label, double radius, void Function() pressHandler) {
   return SizedBox(
@@ -42,4 +44,15 @@ Widget labCirle(
       ),
     ),
   );
+}
+
+Future<ui.Image> getAssetImage(String asset, {width, height}) async {
+  ByteData data = await rootBundle.load(asset);
+  ui.Codec codec = await ui.instantiateImageCodec(
+    data.buffer.asUint8List(),
+    targetHeight: height,
+    targetWidth: width,
+  );
+  ui.FrameInfo info = await codec.getNextFrame();
+  return info.image;
 }
