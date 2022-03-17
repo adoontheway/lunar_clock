@@ -6,14 +6,15 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:lunar_clock/const/const.dart';
 
-String host = "http://192.168.3.5:8000";
+// String host = "http://192.168.3.5:8000";
+String host = "http://lunar.adxwork.com/";
 late Dio dio;
 Future<bool> initDio() async {
   dio = Dio(
     BaseOptions(
       baseUrl: host,
-      // connectTimeout: 5000,
-      // receiveTimeout: 5000,
+      connectTimeout: 5000,
+      receiveTimeout: 5000,
       // headers: {HttpHeaders.userAgentHeader: 'dio', 'common-header': 'xx'},
     ),
   );

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:lunar_clock/value/value.dart';
 import 'package:lunar_clock/view/widgets/widgets.dart';
@@ -29,12 +30,12 @@ Widget buildCalendatChoseButton(
               child: Stack(
                 children: [
                   Positioned(
-                    height: 55.0,
+                    height: 55.0.h,
                     child: Container(
-                      padding: EdgeInsets.only(left: 25, right: 25),
+                      padding: EdgeInsets.only(left: 25.w, right: 25.w),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          width: 2,
+                          width: 2.w,
                           color: Color(0xffcccccc),
                         ),
                         color: Colors.white,

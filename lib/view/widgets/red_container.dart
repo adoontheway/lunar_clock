@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lunar_clock/value/colors.dart';
 
 Container get_red_container(Widget child, {double? width, double? height}) {
@@ -19,8 +20,8 @@ Widget get_title({
 }) {
   textColor ??= Colors.white;
   backgroundColor ??= Colors.blue;
-  width ??= 94;
-  height ??= 26;
+  width ??= 94.w;
+  height ??= 26.h;
   return Container(
     width: width,
     height: height,
@@ -36,7 +37,7 @@ Widget get_title({
         textAlign: TextAlign.center,
         style: TextStyle(
           color: textColor,
-          fontSize: 18,
+          fontSize: 18.sp,
           // fontWeight: FontWeight.bold,
         ),
       ),

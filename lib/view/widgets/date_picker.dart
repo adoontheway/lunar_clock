@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget buildPickerHeader() {
   return Container(
-    width: ScreenUtil().uiSize.width, //MediaQuery.of(context).size.width,
+    width:
+        1.sw, //ScreenUtil().uiSize.width, //MediaQuery.of(context).size.width,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [

@@ -8,7 +8,7 @@
             "name": "lunar_clock",
             "request": "launch",
             "type": "dart",
-            "program": "${workspaceFolder}"
+            "program": "${workspaceFolder}/lib/main.dart"
         }
        
     ]
